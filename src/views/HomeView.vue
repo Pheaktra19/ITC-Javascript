@@ -13,7 +13,8 @@
     </div>
     <div class="flex justify-center">
       <div style="border: 1px solid green" class="mt-2 w-96 h-96">
-        {{ ProductSearched }}
+        {{ ProductSearched.id }}, {{ ProductSearched.name }},
+        {{ categorySearched.name }}
       </div>
     </div>
 
@@ -29,14 +30,16 @@
         <button
           style="border-radius: 10px; background-color: green"
           class="p-1 ml-5 text-white"
-          @click="searchRelatedProduct"
+          @click="productRelated"
         >
           Search Related Product
         </button>
       </div>
       <div class="flex justify-center">
         <div style="border: 1px solid green" class="mt-2 w-96 h-96">
-          {{ relatedProducts }}
+          <div v-for="(item, i) in relatedProducts" :key="i">
+            {{ item.id }}, {{ item.name }} , {{ categorySearched.name }}
+          </div>
         </div>
       </div>
     </div>
@@ -63,8 +66,11 @@ export default {
       ],
       ProductList: [],
       productID: "",
-      ProductSearched: [],
+      ProductSearched: {},
+      categorySearched: {},
       category: "",
+      item: [],
+      item1: [],
 
       // Question 2
       relatedProducts: [],
@@ -72,25 +78,37 @@ export default {
   },
   created() {
     this.displayProduct();
-    this.searchRelatedProduct();
+    this.productRelated();
   },
   methods: {
+    // Solution 1
     displayProduct() {
-      this.ProductList = this.products;
-      console.log("List Products: ", this.ProductList);
-      for (let i = 0; i < this.ProductList.length; i++) {
-        if (parseInt(this.ProductList[i].id) === this.productID) {
-          this.ProductSearched.push(this.ProductList[i]);
+      for (let i = 0; i < this.products.length; i++) {
+        if (parseInt(this.products[i].id) === this.productID) {
+          this.ProductSearched = this.products[i];
+          console.log("final product:", this.ProductSearched);
+          this.categorySearched = this.categories[i];
+          console.log("final category: ", this.categorySearched);
+          break;
         }
       }
     },
-    searchRelatedProduct() {
-      for (let i = 0; i < this.ProductList.length; i++) {
-        if (parseInt(this.ProductList[i].category_id) === this.category) {
-          return this.relatedProducts.push(this.ProductList[i]);
+
+    // Solution2
+    productRelated() {
+      this.relatedProducts = [];
+      for (let i = 0; i < this.products.length; i++) {
+        if (parseInt(this.products.id) === this.category) {
+          this.ProductSearched = this.products[i];
+          this.categorySearched = this.categories[i];
         }
       }
-      console.log("Related Product:", this.relatedProducts);
+      for (let i = 0; i < this.products.length; i++) {
+        if (this.products[i].category_id === this.categorySearched.id) {
+          this.relatedProducts.push(this.products[i]);
+          console.log("ex2:", this.relatedProducts);
+        }
+      }
     },
   },
 };
